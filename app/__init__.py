@@ -1,5 +1,5 @@
 from flask import Flask
-from app.controllers.task_controller import TaskController
+from app.controllers.task_controller import MovieController
 
 def create_app():
     app = Flask(__name__, template_folder='views/templates')
@@ -10,23 +10,23 @@ def create_app():
     # без секретного ключа Flask не може створити безпечну сесію, а значить не може зберегти flash-повідомлення
 
     # екземпляр контролера
-    controller = TaskController()
+    controller = MovieController()
 
     # реєстрація маршрутів та їх обробників
     @app.route('/', methods=['GET'])
     def index():
         return controller.index()
 
-    @app.route('/tasks', methods=['POST'])
+    @app.route('/store', methods=['POST'])
     def store():
         return controller.store()
 
-    @app.route('/tasks/<int:task_id>/done', methods=['POST'])
-    def mark_done(task_id):
-        return controller.mark_done(task_id)
+    @app.route('/watched/<int:movie_id>', methods=['POST'])
+    def mark_watched(movie_id):
+        return controller.mark_watched(movie_id)
 
-    @app.route('/tasks/<int:task_id>/delete', methods=['POST'])
-    def delete(task_id):
-        return controller.delete(task_id)
+    @app.route('/delete/<int:movie_id>', methods=['POST'])
+    def delete(movie_id):
+        return controller.delete(movie_id)
 
     return app

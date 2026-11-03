@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1 class="mb-4">Список фільмів</h1>
+
+<form method="POST" action="{{ url_for('store') }}" class="mb-4">
+    <div class="row g-2">
+        <div class="col-md-4">
+            <input type="text" name="title" class="form-control" placeholder="Назва" required autofocus>
+        </div>
+        <div class="col-md-4">
+            <input type="text" name="genre" class="form-control" placeholder="Жанр">
+        </div>
+        <div class="col-md-4">
+            <input type="text" name="director" class="form-control" placeholder="Режисер">
+        </div>
+        <div class="col-md-3">
+            <input type="number" name="year" class="form-control" placeholder="Рік">
+        </div>
+        <div class="col-md-3">
+            <input type="number" name="duration" class="form-control" placeholder="Тривалість (хв)">
+        </div>
+        <div class="col-md-6">
+            <input type="text" name="studio" class="form-control" placeholder="Студія">
+        </div>
+        <div class="col-md-6">
+            <input type="text" name="actor_name" class="form-control" placeholder="Ім'я актора">
+        </div>
+        <div class="col-md-6">
+            <input type="text" name="actor_role" class="form-control" placeholder="Роль">
+        </div>
+        <div class="col-12">
+            <button class="btn btn-primary" type="submit">Додати</button>
+        </div>
+    </div>
+</form>
+
+{% if movies %}
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Статус</th>
+            <th>Назва</th>
+            <th>Жанр</th>
+            <th>Режисер</th>
+            <th>Рік</th>
+            <th>Тривалість</th>
+            <th>Студія</th>
+            <th>Актор</th>
+            <th>Дії</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for movie in movies %}
+        <tr>
+            <td>{{ movie.id }}</td>
+            <td>
+                {% if movie.watched %}
+                <span class="badge bg-success">✓</span>
+                {% else %}
+                <span class="badge bg-secondary">—</span>
+                {% endif %}
+            </td>
+            <td class="{% if movie.watched %}done{% endif %}">{{ movie.title }}</td>
+            <td>{{ movie.genre }}</td>
+            <td>{{ movie.director }}</td>
+            <td>{{ movie.year }}</td>
+            <td>{{ movie.duration }} хв</td>
+            <td>{{ movie.studio }}</td>
+            <td>{{ movie.actor.name }} ({{ movie.actor.role }})</td>
+            <td>
+                {% if not movie.watched %}
+                <form method="POST" action="{{ url_for('mark_watched', movie_id=movie.id) }}" class="d-inline">
+                    <button type="submit" class="btn btn-sm btn-outline-success">Переглянуто</button>
+                </form>
+                {% endif %}
+                <form method="POST" action="{{ url_for('delete', movie_id=movie.id) }}" class="d-inline">
+                    <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Видалити?')">Видалити</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p class="text-muted">Список порожній. Додайте фільм!</p>
+{% endif %}
+{% endblock %}
